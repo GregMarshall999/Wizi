@@ -1,6 +1,7 @@
 package com.example.wizi;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,6 +15,9 @@ public class MainActivity extends AppCompatActivity {
     private TextView textViewAcc;
     private TextView textViewGyro;
     private TextView textViewLin;
+
+    private View pin;
+
     private Accelerometer accelerometer;
     private Gyroscope gyroscope;
     private LinearAcceleration linearAcceleration;
@@ -26,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
         textViewAcc = findViewById(R.id.text_accelerometer);
         textViewGyro = findViewById(R.id.text_gyroscope);
         textViewLin = findViewById(R.id.text_Linear);
+
+        pin = findViewById(R.id.center_pin);
 
         accelerometer = new Accelerometer(this);
         gyroscope = new Gyroscope(this);
@@ -53,6 +59,9 @@ public class MainActivity extends AppCompatActivity {
         linearAcceleration.setListener(new LinearAcceleration.Listener() {
             @Override
             public void onAcceleration(float ax, float ay, float az) {
+
+                pin.setTranslationX(ax*10);
+                pin.setTranslationY(ay*10);
 
                 textViewLin.setText(ax+"\n"+ay+"\n"+az);
 
