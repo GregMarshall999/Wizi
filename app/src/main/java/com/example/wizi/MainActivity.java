@@ -1,25 +1,19 @@
 package com.example.wizi;
 
+import android.content.res.Configuration;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import Core.Accelerometer;
-import Core.Gyroscope;
 import Core.LinearAcceleration;
 
 public class MainActivity extends AppCompatActivity {
 
-    private TextView textViewAcc;
-    private TextView textViewGyro;
-    private TextView textViewLin;
-
+    private TextView alert;
     private View pin;
-
-    private Accelerometer accelerometer;
-    private Gyroscope gyroscope;
     private LinearAcceleration linearAcceleration;
 
     @Override
@@ -27,44 +21,45 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        textViewAcc = findViewById(R.id.text_accelerometer);
-        textViewGyro = findViewById(R.id.text_gyroscope);
-        textViewLin = findViewById(R.id.text_Linear);
+        alert = findViewById(R.id.text_alert);
 
         pin = findViewById(R.id.center_pin);
 
-        accelerometer = new Accelerometer(this);
-        gyroscope = new Gyroscope(this);
         linearAcceleration = new LinearAcceleration(this);
-
-        accelerometer.setListener(new Accelerometer.Listener() {
-            @Override
-            public void onTranslation(float tx, float ty, float tz) {
-
-                textViewAcc.setText(tx+"\n"+ty+"\n"+tz);
-
-                //getWindow().getDecordView().setBackgroundColor(Color.RED);
-            }
-        });
-
-        gyroscope.setListener(new Gyroscope.Listener() {
-            @Override
-            public void onRotation(float rx, float ry, float rz) {
-
-                textViewGyro.setText(rx+"\n"+ry+"\n"+rz);
-
-            }
-        });
 
         linearAcceleration.setListener(new LinearAcceleration.Listener() {
             @Override
             public void onAcceleration(float ax, float ay, float az) {
 
-                pin.setTranslationX(ax*10);
-                pin.setTranslationY(ay*10);
+                if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
+                {
+                    pin.setTranslationX((ax*100)/9);
+                    pin.setTranslationY((az*100)/9);
 
-                textViewLin.setText(ax+"\n"+ay+"\n"+az);
+                    if(ax<-8 || ax>8 || az<-8 || az>8)
+                    {
+                        alert.setText("Attention"+"\n"+"conduite brutale");
+                    }
+                    else
+                    {
+                        alert.setText("");
+                    }
+                }
 
+                if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
+                {
+                    pin.setTranslationX((ay*100)/9);
+                    pin.setTranslationY((az*100)/9);
+
+                    if(ay<-8 || ax>8 || ay<-8 || az>8)
+                    {
+                        alert.setText("Attention"+"\n"+"conduite brutale");
+                    }
+                    else
+                    {
+                        alert.setText("");
+                    }
+                }
             }
         });
     }
@@ -74,8 +69,6 @@ public class MainActivity extends AppCompatActivity {
     {
         super.onResume();
 
-        accelerometer.register();
-        gyroscope.register();
         linearAcceleration.register();
     }
 
@@ -84,8 +77,6 @@ public class MainActivity extends AppCompatActivity {
     {
         super.onPause();
 
-        accelerometer.unregister();
-        gyroscope.unregister();
         linearAcceleration.unregister();
     }
 }

@@ -42,27 +42,14 @@
         app:layout_anchorGravity="center_horizontal|center" />
 
     <TextView
-        android:id="@+id/text_accelerometer"
+        android:id="@+id/text_alert"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/acc"
-        app:layout_anchor="@+id/include"
-        app:layout_anchorGravity="start|bottom" />
-
-    <TextView
-        android:id="@+id/text_gyroscope"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/gyro"
-        app:layout_anchor="@+id/include"
-        app:layout_anchorGravity="end|bottom" />
-
-    <TextView
-        android:id="@+id/text_Linear"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/linear_acc"
-        app:layout_anchor="@+id/include"
-        app:layout_anchorGravity="center_horizontal|bottom"/>
+        android:scaleX="2"
+        android:scaleY="2"
+        android:text="@string/alert"
+        android:textColor="#E30808"
+        app:layout_anchor="@+id/external_circle"
+        app:layout_anchorGravity="top|center" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
