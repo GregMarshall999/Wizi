@@ -7,13 +7,16 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import Core.Accelerometer;
 import Core.Gyroscope;
+import Core.LinearAcceleration;
 
 public class MainActivity extends AppCompatActivity {
 
     private TextView textViewAcc;
     private TextView textViewGyro;
+    private TextView textViewLin;
     private Accelerometer accelerometer;
     private Gyroscope gyroscope;
+    private LinearAcceleration linearAcceleration;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,9 +25,11 @@ public class MainActivity extends AppCompatActivity {
 
         textViewAcc = findViewById(R.id.text_accelerometer);
         textViewGyro = findViewById(R.id.text_gyroscope);
+        textViewLin = findViewById(R.id.text_Linear);
 
         accelerometer = new Accelerometer(this);
         gyroscope = new Gyroscope(this);
+        linearAcceleration = new LinearAcceleration(this);
 
         accelerometer.setListener(new Accelerometer.Listener() {
             @Override
@@ -45,7 +50,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        linearAcceleration.setListener(new LinearAcceleration.Listener() {
+            @Override
+            public void onAcceleration(float ax, float ay, float az) {
 
+                textViewLin.setText(ax+"\n"+ay+"\n"+az);
+
+            }
+        });
     }
 
     @Override
@@ -55,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
 
         accelerometer.register();
         gyroscope.register();
+        linearAcceleration.register();
     }
 
     @Override
@@ -64,5 +77,6 @@ public class MainActivity extends AppCompatActivity {
 
         accelerometer.unregister();
         gyroscope.unregister();
+        linearAcceleration.unregister();
     }
 }
