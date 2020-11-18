@@ -1,42 +1,68 @@
 package com.example.wizi;
 
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class MainActivity extends AppCompatActivity implements SensorEventListener {
+import Core.Accelerometer;
+import Core.Gyroscope;
 
-    private TextView textView;
-    private SensorManager sensorManager;
-    private Sensor sensor;
+public class MainActivity extends AppCompatActivity {
+
+    private TextView textViewAcc;
+    private TextView textViewGyro;
+    private Accelerometer accelerometer;
+    private Gyroscope gyroscope;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        textView = findViewById(R.id.text_accelerometer);
-        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        sensorManager.registerListener(MainActivity.this, sensor, sensorManager.SENSOR_DELAY_NORMAL);
+        textViewAcc = findViewById(R.id.text_accelerometer);
+        textViewGyro = findViewById(R.id.text_gyroscope);
+
+        accelerometer = new Accelerometer(this);
+        gyroscope = new Gyroscope(this);
+
+        accelerometer.setListener(new Accelerometer.Listener() {
+            @Override
+            public void onTranslation(float tx, float ty, float tz) {
+
+                textViewAcc.setText(tx+"\n"+ty+"\n"+tz);
+
+                //getWindow().getDecordView().setBackgroundColor(Color.RED);
+            }
+        });
+
+        gyroscope.setListener(new Gyroscope.Listener() {
+            @Override
+            public void onRotation(float rx, float ry, float rz) {
+
+                textViewGyro.setText(rx+"\n"+ry+"\n"+rz);
+
+            }
+        });
 
 
     }
 
     @Override
-    public void onSensorChanged(SensorEvent event) {
-        textView.setText(event.values[0]+"\n"
-                +event.values[1]+"\n"
-                +event.values[2]);
+    protected void onResume()
+    {
+        super.onResume();
+
+        accelerometer.register();
+        gyroscope.register();
     }
 
     @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+    protected void onPause()
+    {
+        super.onPause();
 
+        accelerometer.unregister();
+        gyroscope.unregister();
     }
 }
