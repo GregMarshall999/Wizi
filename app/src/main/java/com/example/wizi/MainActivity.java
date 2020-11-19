@@ -1,56 +1,84 @@
 package com.example.wizi;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
+import android.view.View;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
-import android.view.View;
-
-import android.view.Menu;
-import android.view.MenuItem;
+import ai.Train;
+import sensor.LinearAcceleration;
 
 public class MainActivity extends AppCompatActivity {
+
+    private TextView alert;
+    private View pin;
+    private LinearAcceleration linearAcceleration;
+
+    private Train networkTrainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        alert = findViewById(R.id.text_alert);
+        pin = findViewById(R.id.center_pin);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        networkTrainer = new Train();
+
+        linearAcceleration = new LinearAcceleration(this);
+
+        linearAcceleration.setListener(new LinearAcceleration.Listener() {
             @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+            public void onAcceleration(float ax, float ay, float az) {
+
+                if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
+                {
+                    pin.setTranslationX((ax*100)/9);
+                    pin.setTranslationY((az*100)/9);
+
+                    if(ax<-8 || ax>8 || az<-8 || az>8)
+                    {
+                        alert.setText("Attention"+"\n"+"conduite brutale");
+                    }
+                    else
+                    {
+                        alert.setText("");
+                    }
+                }
+
+                if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
+                {
+                    pin.setTranslationX((ay*100)/9);
+                    pin.setTranslationY((az*100)/9);
+
+                    if(ay<-8 || ax>8 || ay<-8 || az>8)
+                    {
+                        alert.setText("Attention"+"\n"+"conduite brutale");
+                    }
+                    else
+                    {
+                        alert.setText("");
+                    }
+                }
             }
         });
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+    protected void onResume()
+    {
+        super.onResume();
+
+        linearAcceleration.register();
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+    protected void onPause()
+    {
+        super.onPause();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+        linearAcceleration.unregister();
     }
 }
