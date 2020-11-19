@@ -1,14 +1,14 @@
 package com.example.wizi;
 
 import android.content.res.Configuration;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import Core.LinearAcceleration;
+import ai.Train;
+import sensor.LinearAcceleration;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -16,14 +16,16 @@ public class MainActivity extends AppCompatActivity {
     private View pin;
     private LinearAcceleration linearAcceleration;
 
+    private Train networkTrainer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         alert = findViewById(R.id.text_alert);
-
         pin = findViewById(R.id.center_pin);
+
+        networkTrainer = new Train();
 
         linearAcceleration = new LinearAcceleration(this);
 
